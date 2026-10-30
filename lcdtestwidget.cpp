@@ -10,7 +10,7 @@
 
 //lcd屏幕分辨率
 #define LCD_RESOLUTION_X 1024
-#define LCD_RESOLUTION_Y 600
+#define LCD_RESOLUTION_Y 768
 
 LcdTestWidget::LcdTestWidget(QWidget *parent)
     : QFrame(parent)
@@ -25,7 +25,8 @@ LcdTestWidget::LcdTestWidget(QWidget *parent)
     QGridLayout *gridLayout = new QGridLayout(touchWidget);//布局小块
     gridLayout->setMargin(0);
     gridLayout->setSpacing(0);
-    for(int i=0;i<12;i++)
+    TouchLabel *touchLabel[15][20];//触摸方块
+    for(int i=0;i<15;i++)
     {
         for(int j=0;j<20;j++)
         {
@@ -38,7 +39,6 @@ LcdTestWidget::LcdTestWidget(QWidget *parent)
     crossCurveWidget->setFixedSize(LCD_RESOLUTION_X,LCD_RESOLUTION_Y);
     crossCurveWidget->raise();
     //自动切换颜色定时器
-    colorNameList<<"white"<<"red"<<"green"<<"blue"<<"cyan"<<"magenta"<<"yellow";
     colorNameIndex = 0;
     colorChangeTimer = new QTimer(this);
     colorChangeTimer->setInterval(1000);
@@ -53,7 +53,6 @@ LcdTestWidget::~LcdTestWidget()
 /*
  *@brief:   鼠标按下事件处理
  * 将鼠标按下事件分发给触摸块部件
- *@author:  缪庆瑞
  *@date:    2020.12.29
  *@param:   e:鼠标事件
  */
@@ -66,7 +65,7 @@ void LcdTestWidget::mousePressEvent(QMouseEvent *e)
         touchWidget->setVisible(true);//显示触摸块小部件
         this->setStyleSheet(QString("LcdTestWidget{background-color:%1;}").arg(colorNameList.at(0)));
     }
-    /*使用childAt()获取指定位置的小部件,然后将鼠标事件的pos转换(mapFrom())后发送给小部件
+    /* 使用childAt()获取指定位置的小部件,然后将鼠标事件的pos转换(mapFrom())后发送给小部件
      * 注:当同一位置有多个部件时childAt()返回最上层显示且能够接收鼠标事件的部件，所以此处
      * 默认获取的将是crossCurveWidget部件，要想获取TouchLabel部件此处需要先把crossCurveWidget
      * 设置鼠标透传属性。
@@ -82,8 +81,30 @@ void LcdTestWidget::mousePressEvent(QMouseEvent *e)
     crossCurveWidget->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 }
 /*
+ *@brief:   鼠标移动事件(按下)处理
+ * 将鼠标移动事件转换成按下事件给触摸块部件，支持按下移动操作检测触摸块是否正常
+ *@date:    2026.10.30
+ *@param:   e:鼠标事件
+ */
+void LcdTestWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    /* 使用childAt()获取指定位置的小部件,然后将鼠标事件的pos转换(mapFrom())后发送给小部件
+     * 注:当同一位置有多个部件时childAt()返回最上层显示且能够接收鼠标事件的部件，所以此处
+     * 默认获取的将是crossCurveWidget部件，要想获取TouchLabel部件此处需要先把crossCurveWidget
+     * 设置鼠标透传属性。
+     */
+    crossCurveWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    QWidget *wid = this->childAt(e->pos());
+    if(wid)
+    {
+        QPoint p = wid->mapFrom(this, e->pos());
+        QMouseEvent *mEvent = new QMouseEvent(QEvent::MouseButtonPress, p, e->button(), e->buttons(), e->modifiers());
+        QApplication::postEvent(wid, mEvent);
+    }
+    crossCurveWidget->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+}
+/*
  *@brief:   自动切换颜色定时器响应槽
- *@author:  缪庆瑞
  *@date:    2020.12.29
  */
 void LcdTestWidget::colorChangeTimerSlot()

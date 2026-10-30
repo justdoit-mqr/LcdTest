@@ -1,6 +1,7 @@
 /*
  *@author:  缪庆瑞
  *@date:    2020.12.29
+ *@update:  2026.10.30
  *@brief:   十字线部件
  */
 #ifndef CROSSCURVEWIDGET_H
@@ -19,6 +20,7 @@ public:
 
 protected:
     virtual void mousePressEvent(QMouseEvent *e);
+    virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void paintEvent(QPaintEvent  *event);
 
 private:

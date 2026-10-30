@@ -12,7 +12,6 @@ TouchLabel::TouchLabel(QWidget *parent)
 }
 /*
  *@brief:   鼠标按下事件处理
- *@author:  缪庆瑞
  *@date:    2020.12.29
  *@param:   e:鼠标事件
  */
@@ -24,7 +23,6 @@ void TouchLabel::mousePressEvent(QMouseEvent *e)
 }
 /*
  *@brief:   绘图事件处理函数
- *@author:  缪庆瑞
  *@date:    2020.12.28
  *@param:   event: 传递的绘图事件
  */

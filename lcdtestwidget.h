@@ -22,14 +22,14 @@ public:
 
 protected:
     virtual void mousePressEvent(QMouseEvent *e);
+    virtual void mouseMoveEvent(QMouseEvent *e);
 
 private:
     QWidget *touchWidget;//触摸块部件
-    TouchLabel *touchLabel[12][20];//12*20个触摸方块
     CrossCurveWidget *crossCurveWidget;//十字线部件
 
     QTimer *colorChangeTimer;//自动切换颜色的定时器
-    QStringList colorNameList;//颜色列表
+    QStringList colorNameList = {"white","red","#FFA500","yellow","green","cyan","blue","#800080"};//颜色列表
     int colorNameIndex;//颜色索引
 
 signals:
